@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  telegram-assistant:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: telegram-ai-assistant
+    restart: unless-stopped
+    environment:
+      # Telegram Configuration
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      
+      # AI Configuration
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - DEFAULT_MODEL=${DEFAULT_MODEL:-gpt-4o}
+      
+      # Application Settings
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - DATABASE_PATH=/app/data/assistant.db
+      - MAX_HISTORY_MESSAGES=${MAX_HISTORY_MESSAGES:-50}
+      - SESSION_TIMEOUT_MINUTES=${SESSION_TIMEOUT_MINUTES:-60}
+      
+      # Security Settings
+      - DM_POLICY=${DM_POLICY:-open}
+      - ALLOWED_USERS=${ALLOWED_USERS:-*}
+      - TELEGRAM_ALLOWED_USERS=${TELEGRAM_ALLOWED_USERS:-*}
+      
+      # Feature Flags
+      - ENABLE_THREAD_SUMMARY=${ENABLE_THREAD_SUMMARY:-true}
+      - ENABLE_TASK_SCHEDULER=${ENABLE_TASK_SCHEDULER:-true}
+      - ENABLE_REACTIONS=${ENABLE_REACTIONS:-true}
+      - ENABLE_TYPING_INDICATOR=${ENABLE_TYPING_INDICATOR:-true}
+    volumes:
+      # Persist database
+      - assistant-data:/app/data
+      # Persist logs
+      - assistant-logs:/app/logs
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('healthy')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  assistant-data:
+    driver: local
+  assistant-logs:
+    driver: local
