@@ -238,7 +238,7 @@ Now edit `.env` with your keys:
 # ═══════════════════════════════════════════════
 
 # Your Telegram bot token from @BotFather
-TELEGRAM_BOT_TOKEN=123456789:ABCdefGHIjklMNOpqrsTUVwxyz
+TELEGRAM_BOT_TOKEN=your_token_here
 
 # Your OpenAI API key (for AI brain + text embeddings)
 OPENAI_API_KEY=sk-your-key-here
